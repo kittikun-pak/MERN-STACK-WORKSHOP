@@ -19,3 +19,12 @@ export const getUser = () => {
         if(sessionStorage.getItem("user")) return JSON.parse(sessionStorage.getItem("user"))
     } else return false
 } 
+
+//logout
+export const logout = (next) => {
+    if(window !== "undefined") {
+        sessionStorage.removeItem("token")
+        sessionStorage.removeItem("user")
+    }
+    next()
+}

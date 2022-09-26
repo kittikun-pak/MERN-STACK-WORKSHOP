@@ -1,8 +1,8 @@
 import NavbarComponent from "./NavbarComponent"
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import axios from 'axios'
 import Swal from "sweetalert2"
-import { authenticate } from "../Services/authorize"
+import { authenticate, getUser } from "../Services/authorize"
 import {useNavigate} from "react-router-dom"
 
 
@@ -14,6 +14,8 @@ const LogInComponent = (props) => {
         username: "",
         password:""
     })
+
+    const {username, password} = state || {}
 
     const inputValue = name => event => {
         setState({...state,[name]:event.target.value})
@@ -33,7 +35,12 @@ const LogInComponent = (props) => {
               )
         })
     }
-    const {username, password} = state || {}
+
+    useEffect(() => {
+        getUser() && navigate("/")
+        // eslint-disable-next-line
+    },[])
+
     return (
         <div className="container p-5">
             <NavbarComponent />

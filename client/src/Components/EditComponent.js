@@ -5,6 +5,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useLocation } from 'react-router-dom'
 import 'react-quill/dist/quill.snow.css'
+import { getToken } from '../Services/authorize'
 
 const EditComponent = () => {
     const location = useLocation()
@@ -29,7 +30,12 @@ const EditComponent = () => {
         e.preventDefault()
         console.table({title,content,author})
         console.log("API URL ",process.env.REACT_APP_API)
-        axios.put(`${process.env.REACT_APP_API}/blog/${slug}`,{title, content, author})
+        axios.put(`${process.env.REACT_APP_API}/blog/${slug}`,{title, content, author},
+        {
+            headers:{
+                Authorization:`Bearer ${getToken()}`
+            }
+        })
         .then(response => {
             const {title,content,author,slug} = response.data
             setState({...state,title, content,author,slug})

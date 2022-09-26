@@ -3,6 +3,7 @@ import axios from 'axios'
 import {useState,useEffect} from 'react'
 import Swal from 'sweetalert2'
 import {Link} from 'react-router-dom'
+import { getUser, getToken } from "./Services/authorize"
 
 function App() {
   const [blogs,setBlogs] = useState({})
@@ -38,7 +39,12 @@ function App() {
   }
 
   const DeleteBlog = (slug) => {
-    axios.delete(`${process.env.REACT_APP_API}/blog/${slug}`)
+    axios.delete(`${process.env.REACT_APP_API}/blog/${slug}`,
+    {
+      headers:{
+          Authorization:`Bearer ${getToken()}`
+      }
+  })
     .then(response => {
       Swal.fire("Deleted !",response.data.message,"success")
       fetchData()
@@ -50,7 +56,6 @@ function App() {
       <NavbarComponent />
       <h1>CRUD | MERN-STACK</h1>
       <h1>WRITE ARTICLE WORKSHOP</h1>
-      <a className="btn btn-primary" href="/create">เขียนบทความ</a>
       {Array.from(blogs).map((blog,index) => (
         <div className="row" key={index} style={{borderBottom:`1px solid silver`}}>
           <div className="col pt-3 pb-2">
@@ -61,8 +66,14 @@ function App() {
             <div className="pt-3" >{(blog.content.substring(0,300))}</div>
 
             <p className="text-muted">ผู้เขียน:{blog.author} , เผยแพร่: {new Date(blog.createdAt).toLocaleString()}</p>
-            <Link to={`/blog/edit/${blog.slug}`} state={{ blog: blog }} className="btn btn-outline-success">แก้ไขบทความ</Link> &nbsp;
-            <button className="btn btn-outline-danger" onClick={() => confirmDelete(blog.slug)}>ลบบทความ</button>
+            {
+              getUser() && (
+                <div>
+                  <Link to={`/blog/edit/${blog.slug}`} state={{ blog: blog }} className="btn btn-outline-success">แก้ไขบทความ</Link> &nbsp;
+                  <button className="btn btn-outline-danger" onClick={() => confirmDelete(blog.slug)}>ลบบทความ</button>
+                </div>
+              )
+            }
           </div>
         </div>
       ))}
@@ -71,3 +82,4 @@ function App() {
 }
 
 export default App;
+
